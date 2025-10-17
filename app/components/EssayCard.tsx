@@ -1,3 +1,5 @@
+// app/components/EssayCard.tsx
+
 export function EssayCard({ title, payload }: { title?: string; payload: any }) {
   const text =
     payload?.markdown ??
@@ -7,8 +9,8 @@ export function EssayCard({ title, payload }: { title?: string; payload: any }) 
 
   return (
     <article className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-      <h2 className="mb-3 text-lg font-semibold">{title ?? payload?.title ?? "Essay"}</h2>
-      <div className="prose max-w-none text-zinc-800 whitespace-pre-wrap">{text}</div>
+      <h2 className="mb-3 text-lg font-semibold">{title ?? payload?.title ?? 'Essay'}</h2>
+      <div className="prose max-w-none whitespace-pre-wrap text-zinc-800">{text}</div>
     </article>
   );
 }
