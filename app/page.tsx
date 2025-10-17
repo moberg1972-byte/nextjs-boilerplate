@@ -1,103 +1,20 @@
-import Image from "next/image";
+import { ChncCard, type ChncPayload } from './components/ChncCard';
 
-export default function Home() {
+const sample: ChncPayload = {
+  rows: [
+    {"notes":"Monthly dev updates.","format":"News","pcl_id":null,"row_key":"YouTube","evidence":"E","platform":"YouTube","cadence_12m":12,"cadence_90d":3,"example_url":"https://www.youtube.com/watch?v=example1","example_date":"2023-09-15","timing_nouns":["Dev Diary","Update"],"audience_locus":"owned","cadence_phrase":"1/mo","channel_series":"Dev Diary"},
+    {"notes":"Regular patch updates.","format":"Store/Blog","pcl_id":null,"row_key":"Steam","evidence":"E","platform":"Steam","cadence_12m":8,"cadence_90d":2,"example_url":"https://store.steampowered.com/news/app/example","example_date":"2023-08-10","timing_nouns":["Patch Notes","Update"],"audience_locus":"owned","cadence_phrase":"1–2/mo","channel_series":"N/A"},
+    {"notes":"Occasional announcements.","format":"Announcements","pcl_id":null,"row_key":"PlayStation Blog","evidence":"E","platform":"PlayStation Blog","cadence_12m":5,"cadence_90d":1,"example_url":"https://blog.playstation.com/2023/07/20/example","example_date":"2023-07-20","timing_nouns":["Announcement"],"audience_locus":"owned","cadence_phrase":"1/mo","channel_series":"N/A"},
+    {"notes":"Frequent updates and community engagement.","format":"Announcements","pcl_id":null,"row_key":"X","evidence":"E","platform":"X","cadence_12m":20,"cadence_90d":5,"example_url":"https://twitter.com/example/status/123456789","example_date":"2023-09-01","timing_nouns":["Update","Announcement"],"audience_locus":"community","cadence_phrase":"2–3/mo","channel_series":"N/A"}
+  ],
+  preset_rows: ["YouTube","Steam","PlayStation Blog","Xbox Wire","Nintendo News","Official Site","Blog","X","Instagram","Facebook","TikTok","Forum","Discord","Reddit"]
+};
+
+export default function Page() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <main style={{ padding: 24, maxWidth: 1100, margin: '0 auto' }}>
+      <h1>UA Cadence & Channels</h1>
+      <ChncCard title="Channels & Cadence (Sample)" payload={sample} />
+    </main>
   );
 }
