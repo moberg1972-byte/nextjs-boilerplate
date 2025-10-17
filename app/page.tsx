@@ -25,6 +25,7 @@ export default async function Page({ searchParams }: { searchParams?: { doc?: st
   if (docId) query = query.eq('doc_id', docId);
 
   const { data, error } = await query;
+  console.log("SUPABASE_URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
   if (error) return <pre>Failed to load: {error.message}</pre>;
   if (!data?.length) return <p>No CMP.CHNC found. Run your Execute workflow.</p>;
 
