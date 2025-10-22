@@ -29,17 +29,20 @@ export const CMP_DEF: LaneDefinition = {
     },
     {
       title: 'BUSINESS',
-      rowHeight: 168,
-      blocks: [
-        { id:'CMP.BCOT.POSE', rowSpan: 2 },
-        { id:'CMP.BCOT.STUB', rowSpan: 2 },
-        { id:'CMP.BCOT.WHYN', rowSpan: 2 },
-        { id:'CMP.BCOT.UNKN', rowSpan: 2 },
-        { id:'CMP.CHNC.TIMINGS' },
-        { id:'CMP.ORGM.GAP' },
-        { id:'CMP.BCOT.RISK' },
-        { id:'CMP.CHNC.GAP' },
-      ],
+  rowHeight: 220,
+  blocks: [
+    // span 2 rows each:
+    { id: 'CMP.BCOT.POSE',   colSpan: 1, rowSpan: 2 },
+    { id: 'CMP.BCOT.STUB',   colSpan: 1, rowSpan: 2 },
+    { id: 'CMP.BCOT.WHYN',   colSpan: 1, rowSpan: 2 },
+
+    // single-row cards:
+    { id: 'CMP.BCOT.UNKN',   colSpan: 1, rowSpan: 1 },
+    { id: 'CMP.CHNC.TIMINGS',colSpan: 1, rowSpan: 1 },
+    { id: 'CMP.ORGM.GAP',    colSpan: 1, rowSpan: 1 },
+    { id: 'CMP.BCOT.RISK',   colSpan: 1, rowSpan: 1 },
+    { id: 'CMP.CHNC.GAP',    colSpan: 1, rowSpan: 1 },
+  ],
     },
   ],
   cardMap: CARD_BY_OUTPUT, // can be extended/overridden per lane
