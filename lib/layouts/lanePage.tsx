@@ -34,7 +34,7 @@ export async function LanePage({ def }: { def: LaneDefinition }) {
 
   const { data, error } = await supabase
     .from('v_instruction_outputs_v2')
-    .select('doc_id,lane_id,job_id,output_id,content_json')
+    .select('doc_id,lane_id,job_id,output_id,content_json,card_type')
     .eq('lane_id', def.laneId)
     .order('output_id', { ascending: true });
 
