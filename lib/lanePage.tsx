@@ -19,10 +19,17 @@ function SectionHeader({ title }: { title: string }) {
 
 function renderCard(kind: string, row: Row, title: string) {
   switch (kind) {
-    case 'prose':      return <ProseCard row={row} title={title} />;
-    case 'nameValue':  return <NameValueCard row={row} title={title} />;
-    case 'table':      return <TableCard row={row} title={title} />;
-    default:           return <FallbackCard row={row} title={title} />;
+    case 'PROSE':      // DB value
+    case 'prose':      // code-based fallback
+      return <ProseCard row={row} title={title} />;
+    case 'NAME_VALUE':
+    case 'nameValue':
+      return <NameValueCard row={row} title={title} />;
+    case 'TABLE':
+    case 'table':
+      return <TableCard row={row} title={title} />;
+    default:
+      return <FallbackCard row={row} title={title} />;
   }
 }
 
@@ -58,21 +65,26 @@ export async function LanePage({ def }: { def: LaneDefinition }) {
           <section key={sec.title}>
             <SectionHeader title={sec.title} />
             <div className={`grid gap-4 ${UI.sectionCols} ${UI.row(sec.rowHeight)}`}>
-              {sec.blocks.map((b, i) => {
+              {sec.blocks.map((b) => {
                 const row = byId[b.id];
-                if (!row) return <div key={b.id + i} className="opacity-30"><CardShell title={def.titles?.[b.id] ?? b.id} outputId={b.id}><div className="text-sm text-zinc-500">No data</div></CardShell></div>;
-                const cardType = def.cardMap[b.id] ?? 'fallback';
-                const span = [
+                if (!row) { ... }
+
+                const dbType = row.card_type ?? null;                // <-- prefer DB hint
+                const mapType = def.cardMap[b.id] ?? 'fallback';     // lane default
+                const kind    = (dbType || mapType) as string;
+
+                const title   = def.titles?.[b.id] ?? row.output_id;
+                const span    = [
                   b.colSpan ? `xl:col-span-${b.colSpan}` : '',
                   b.rowSpan ? `xl:row-span-${b.rowSpan}` : '',
                 ].join(' ').trim();
-                const title = def.titles?.[b.id] ?? row.output_id;
+
                 return (
                   <div key={row.output_id} className={span}>
-                    {renderCard(cardType, row, title)}
-                  </div>
-                );
-              })}
+                  {renderCard(kind, row, title)}
+                </div>
+               );
+             })}
             </div>
           </section>
         ))}
