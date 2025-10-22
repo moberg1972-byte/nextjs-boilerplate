@@ -7,7 +7,7 @@ export const CMP_DEF: LaneDefinition = {
   sections: [
     {
       title: 'ORGANISATION',
-      rowHeight: 240,
+      rowHeight: 280,
       blocks: [
         { id:'CMP.TITL.LISTING' },
         { id:'CMP.ETHO.ESSAY' },
