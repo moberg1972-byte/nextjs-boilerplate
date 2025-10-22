@@ -6,6 +6,9 @@ export default function TableCard({ row, title }: { row: Row; title: string }) {
   const rows = row.content_json?.rows ?? [];
   return (
     <CardShell title={title} outputId={row.output_id} shadowless>
+      {!rows.length ? (
+      <p className="text-sm text-zinc-400">No rows yet.</p>
+      ) : (
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead className="text-zinc-600">
@@ -32,6 +35,6 @@ export default function TableCard({ row, title }: { row: Row; title: string }) {
           </tbody>
         </table>
       </div>
+      )}
     </CardShell>
   );
-}
