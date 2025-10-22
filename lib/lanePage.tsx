@@ -62,33 +62,48 @@ export async function LanePage({ def }: { def: LaneDefinition }) {
         </header>
 
         {def.sections.map((sec) => (
-          <section key={sec.title}>
-            <SectionHeader title={sec.title} />
-            <div className={`grid gap-4 ${UI.sectionCols} ${UI.row(sec.rowHeight)}`}>
-              {sec.blocks.map((b) => {
-                const row = byId[b.id];
-                if (!row) { ... }
+  <section key={sec.title}>
+    <SectionHeader title={sec.title} />
+    <div className={`grid gap-4 ${UI.sectionCols} ${UI.row(sec.rowHeight)}`}>
+      {sec.blocks.map((b) => {
+        const row = byId[b.id];
 
-                const dbType = row.card_type ?? null;                // <-- prefer DB hint
-                const mapType = def.cardMap[b.id] ?? 'fallback';     // lane default
-                const kind    = (dbType || mapType) as string;
+        // graceful placeholder when a block has no data yet
+        if (!row) {
+          const span = [
+            b.colSpan ? `xl:col-span-${b.colSpan}` : '',
+            b.rowSpan ? `xl:row-span-${b.rowSpan}` : '',
+          ].join(' ').trim();
 
-                const title   = def.titles?.[b.id] ?? row.output_id;
-                const span    = [
-                  b.colSpan ? `xl:col-span-${b.colSpan}` : '',
-                  b.rowSpan ? `xl:row-span-${b.rowSpan}` : '',
-                ].join(' ').trim();
-
-                return (
-                  <div key={row.output_id} className={span}>
-                  {renderCard(kind, row, title)}
-                </div>
-               );
-             })}
+          return (
+            <div key={b.id} className={span}>
+              <CardShell title={def.titles?.[b.id] ?? b.id} outputId={b.id}>
+                <p className="text-sm text-zinc-400">No data yet.</p>
+              </CardShell>
             </div>
-          </section>
-        ))}
+          );
+        }
 
+        // choose card type: prefer DB card_type, then lane default, else fallback
+        const dbType  = row.card_type ?? null;
+        const mapType = def.cardMap[b.id] ?? 'fallback';
+        const kind    = (dbType || mapType) as string;
+
+        const title   = def.titles?.[b.id] ?? row.output_id;
+        const span    = [
+          b.colSpan ? `xl:col-span-${b.colSpan}` : '',
+          b.rowSpan ? `xl:row-span-${b.rowSpan}` : '',
+        ].join(' ').trim();
+
+        return (
+          <div key={row.output_id} className={span}>
+            {renderCard(kind, row, title)}
+          </div>
+        );
+      })}
+    </div>
+  </section>
+))}
         {unplaced.length > 0 && (
           <section>
             <SectionHeader title="UNPLACED" />
