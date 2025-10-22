@@ -104,10 +104,10 @@ export default async function Page({ searchParams }: { searchParams?: { doc_id?:
 
   // Use your existing view/table name here:
   const base = supabase
-    .from('v_instruction_outputs') // change to your actual view/table name if different
-    .select('doc_id,lane_id,job_id,output_id,content_json')
-    .eq('lane_id','CMP')
-    .order('output_id', { ascending: true });
+  .from('v_instruction_outputs_v2')   // <-- updated
+  .select('doc_id,lane_id,job_id,output_id,content_json')
+  .eq('lane_id','CMP')
+  .order('output_id', { ascending: true });
 
   const { doc_id } = searchParams ?? {};
   const { data, error } = doc_id ? await base.eq('doc_id', doc_id) : await base;
