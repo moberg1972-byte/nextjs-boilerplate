@@ -49,15 +49,15 @@ const CHN = [
 ] as const;
 
 const BUS = [
-  // Rows 3 + 4 combined (BCOT x4 span 2 rows)
+  // rows 3+4 combined via row-span-2 on the first four
   'CMP.BCOT.POSE',
   'CMP.BCOT.STUB',
   'CMP.BCOT.WHYN',
   'CMP.BCOT.UNKN',
-  // Row 3 right
+  // row 3 right
   'CMP.CHNC.TIMINGS',
   'CMP.ORGM.GAP',
-  // Row 4 right
+  // row 4 right
   'CMP.BCOT.RISK',
   'CMP.CHNC.GAP',
 ] as const;
@@ -93,7 +93,7 @@ function Card({ row }: { row: Row }) {
     >
       <div className="mb-1">
         <h3 className="text-base font-semibold leading-tight">{title}</h3>
-        {/* show output_id under the title */}
+        {/* show output_id (not job_id) */}
         <p className="text-[11px] tracking-wide text-zinc-500">{row.output_id}</p>
       </div>
       <p className="text-sm text-zinc-700 line-clamp-6">{preview}</p>
@@ -116,13 +116,14 @@ export default async function Page({
   );
 
   const base = supabase
-    .from('v_instruction_outputs_v2') // <-- use your real view/table name
+    .from('v_instruction_outputs_v2') // <— your unified view
     .select('doc_id,lane_id,job_id,output_id,content_json')
     .eq('lane_id', 'CMP')
     .order('output_id', { ascending: true });
 
   const { doc_id } = searchParams ?? {};
   const { data, error } = doc_id ? await base.eq('doc_id', doc_id) : await base;
+
   if (error) {
     return (
       <pre className="p-8 text-sm text-red-600">
@@ -131,20 +132,27 @@ export default async function Page({
     );
   }
 
-  const byId = Object.fromEntries((data ?? []).map((r) => [r.output_id, r]));
+  const list = (data ?? []) as Row[];
+  const byId = Object.fromEntries(list.map((r) => [r.output_id, r]));
+
   const org = pick(byId, ORG);
   const chn = pick(byId, CHN);
   const bus = pick(byId, BUS);
 
+  // (optional) anything not in our section plans
+  const planned = new Set<string>([...ORG, ...CHN, ...BUS]);
+  const unplaced = list.filter((r) => !planned.has(r.output_id));
+
   return (
     <main className="min-h-screen bg-zinc-100">
+      {/* 40% wider canvas */}
       <div className="mx-auto px-4 py-10 max-w-[1960px]">
         <header className="mb-6">
           <h1 className="text-2xl font-bold">UA Cadence & Company</h1>
           <p className="text-zinc-600">Live CMP data from Supabase. 3 sectioned grids (6-col).</p>
         </header>
 
-        {/* ORGANISATION */}
+        {/* ORGANISATION — 240px row height */}
         <Section title="ORGANISATION" />
         <div className="grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 xl:auto-rows-[240px]">
           {org.map((row) => (
@@ -152,12 +160,11 @@ export default async function Page({
           ))}
         </div>
 
-        {/* CHANNELS */}
+        {/* CHANNELS — 336px row height; table spans 3 cols */}
         <Section title="CHANNELS" />
         <div className="grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 xl:auto-rows-[336px]">
           {chn.map((row) => {
-            const span =
-              row.output_id === 'CMP.CHNC.CHANNELS' ? 'xl:col-span-3' : '';
+            const span = row.output_id === 'CMP.CHNC.CHANNELS' ? 'xl:col-span-3' : '';
             return (
               <div key={row.output_id} className={span}>
                 <Card row={row} />
@@ -166,7 +173,7 @@ export default async function Page({
           })}
         </div>
 
-        {/* BUSINESS */}
+        {/* BUSINESS — rows are 168px; first four items span 2 rows, so rows 3+4 == channels height */}
         <Section title="BUSINESS" />
         <div className="grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 xl:auto-rows-[168px]">
           {bus.map((row) => {
@@ -185,11 +192,18 @@ export default async function Page({
           })}
         </div>
 
-        {/* Unplaced (anything not in our section maps) */}
-        {data && data.length > 0 && (
+        {/* Unplaced (optional) */}
+        {unplaced.length > 0 && (
           <>
-            const planned = new Set([...ORG, ...CHN, ...BUS]);
-            const unplaced = (data as Row[]).filter((r) => !planned.has(r.output_id));
+            <div className="mt-10 mb-3">
+              <div className="text-xs font-semibold tracking-wider text-zinc-500">UNPLACED</div>
+              <div className="mt-2 border-t border-zinc-200" />
+            </div>
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 xl:auto-rows-[200px]">
+              {unplaced.map((row) => (
+                <Card key={row.output_id} row={row} />
+              ))}
+            </div>
           </>
         )}
       </div>
