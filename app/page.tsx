@@ -9,7 +9,7 @@ type Row = {
   content_json: any;
 };
 
-// map friendly titles
+// Human-friendly titles
 const TITLE: Record<string, string> = {
   'CMP.TITL.LISTING': 'Game Title Listings',
   'CMP.ETHO.ESSAY': 'Company Ethos Essay',
@@ -31,48 +31,44 @@ const TITLE: Record<string, string> = {
   'CMP.CHNC.GAP': 'Descriptive Gap Signal',
 };
 
-// 6-col placement (your sketch)
-const PLACE: Record<string, { col: number; row: number; colSpan?: number; rowSpan?: number }> = {
-  'CMP.TITL.LISTING': { col: 1, row: 1 },
-  'CMP.ETHO.ESSAY':   { col: 2, row: 1 },
-  'CMP.ORGM.MAP':     { col: 3, row: 1 },
-  'CMP.ORGM.LSEEDS':  { col: 4, row: 1 },
-  'CMP.KCDC.PRIMARY': { col: 5, row: 1 },
-  'CMP.KCDC.SECOND':  { col: 6, row: 1 },
+// IDs per section
+const ORG = [
+  'CMP.TITL.LISTING',
+  'CMP.ETHO.ESSAY',
+  'CMP.ORGM.MAP',
+  'CMP.ORGM.LSEEDS',
+  'CMP.KCDC.PRIMARY',
+  'CMP.KCDC.SECOND',
+] as const;
 
-  'CMP.CHNC.OVERVIEW': { col: 1, row: 2 },
-  'CMP.CHNC.CHANNELS': { col: 2, row: 2, colSpan: 3 },
-  'CMP.KCDC.CULTURE':  { col: 5, row: 2 },
-  'CMP.KCDC.CLUSTER':  { col: 6, row: 2 },
+const CHN = [
+  'CMP.CHNC.OVERVIEW',
+  'CMP.CHNC.CHANNELS', // spans 3 cols
+  'CMP.KCDC.CULTURE',
+  'CMP.KCDC.CLUSTER',
+] as const;
 
-  'CMP.BCOT.POSE':    { col: 1, row: 3, rowSpan: 2 },
-  'CMP.BCOT.STUB':    { col: 2, row: 3, rowSpan: 2 },
-  'CMP.BCOT.WHYN':    { col: 3, row: 3, rowSpan: 2 },
-  'CMP.BCOT.UNKN':    { col: 4, row: 3, rowSpan: 2 },
-  'CMP.CHNC.TIMINGS': { col: 5, row: 3 },
-  'CMP.ORGM.GAP':     { col: 6, row: 3 },
+const BUS = [
+  // Rows 3 + 4 combined (BCOT x4 span 2 rows)
+  'CMP.BCOT.POSE',
+  'CMP.BCOT.STUB',
+  'CMP.BCOT.WHYN',
+  'CMP.BCOT.UNKN',
+  // Row 3 right
+  'CMP.CHNC.TIMINGS',
+  'CMP.ORGM.GAP',
+  // Row 4 right
+  'CMP.BCOT.RISK',
+  'CMP.CHNC.GAP',
+] as const;
 
-  'CMP.BCOT.RISK': { col: 5, row: 4 },
-  'CMP.CHNC.GAP':  { col: 6, row: 4 },
-};
-
-// Tailwind JIT-safe maps
-const colStart = {1:'xl:col-start-1',2:'xl:col-start-2',3:'xl:col-start-3',4:'xl:col-start-4',5:'xl:col-start-5',6:'xl:col-start-6'} as const;
-const rowStart = {1:'xl:row-start-1',2:'xl:row-start-2',3:'xl:row-start-3',4:'xl:row-start-4'} as const;
-const colSpan  = {1:'',2:'xl:col-span-2',3:'xl:col-span-3',4:'xl:col-span-4',5:'xl:col-span-5',6:'xl:col-span-6'} as const;
-const rowSpan  = {1:'',2:'xl:row-span-2',3:'xl:row-span-3',4:'xl:row-span-4'} as const;
-
-function areaClasses(id: string) {
-  const p = PLACE[id];
-  if (!p) return 'xl:col-span-2';
-  const cs = p.colSpan ?? 1, rs = p.rowSpan ?? 1;
-  return [
-    'h-full',
-    colStart[p.col as 1|2|3|4|5|6],
-    rowStart[p.row as 1|2|3|4],
-    colSpan[cs as 1|2|3|4|5|6],
-    rowSpan[rs as 1|2|3|4],
-  ].join(' ');
+function Section({ title }: { title: string }) {
+  return (
+    <div className="mt-8 mb-3">
+      <div className="text-xs font-semibold tracking-wider text-zinc-500">{title}</div>
+      <div className="mt-2 border-t border-zinc-200" />
+    </div>
+  );
 }
 
 function Card({ row }: { row: Row }) {
@@ -80,67 +76,120 @@ function Card({ row }: { row: Row }) {
   const preview =
     row.content_json?.paragraph ??
     row.content_json?.line ??
-    (Array.isArray(row.content_json?.bullets) ? row.content_json.bullets.map((b:any)=>b.text).slice(0,2).join(' • ') : '');
+    (Array.isArray(row.content_json?.bullets)
+      ? row.content_json.bullets.map((b: any) => b.text).slice(0, 2).join(' • ')
+      : '');
+
+  // Special style: Channels table sits “on background” (no shadow)
+  const shadowless = row.output_id === 'CMP.CHNC.CHANNELS';
 
   return (
-    <div className="rounded-2xl border p-4 shadow-sm bg-white h-full flex flex-col">
-      <div className="flex items-center justify-between mb-2">
-        <div>
-          <h3 className="text-base font-semibold leading-tight">{title}</h3>
-          <p className="text-xs text-zinc-500">{row.job_id}</p>
-        </div>
+    <div
+      className={[
+        'h-full rounded-2xl bg-white',
+        shadowless ? '' : 'shadow-lg',
+        'p-4 flex flex-col',
+      ].join(' ')}
+    >
+      <div className="mb-1">
+        <h3 className="text-base font-semibold leading-tight">{title}</h3>
+        {/* show output_id under the title */}
+        <p className="text-[11px] tracking-wide text-zinc-500">{row.output_id}</p>
       </div>
       <p className="text-sm text-zinc-700 line-clamp-6">{preview}</p>
     </div>
   );
 }
 
-export default async function Page({ searchParams }: { searchParams?: { doc_id?: string } }) {
-  // Create client inline (no external import)
+function pick(map: Record<string, Row>, ids: readonly string[]) {
+  return ids.map((id) => map[id]).filter(Boolean) as Row[];
+}
+
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: { doc_id?: string };
+}) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  // Use your existing view/table name here:
   const base = supabase
-  .from('v_instruction_outputs_v2')   // <-- updated
-  .select('doc_id,lane_id,job_id,output_id,content_json')
-  .eq('lane_id','CMP')
-  .order('output_id', { ascending: true });
+    .from('v_instruction_outputs_v2') // <-- use your real view/table name
+    .select('doc_id,lane_id,job_id,output_id,content_json')
+    .eq('lane_id', 'CMP')
+    .order('output_id', { ascending: true });
 
   const { doc_id } = searchParams ?? {};
   const { data, error } = doc_id ? await base.eq('doc_id', doc_id) : await base;
-  if (error) return <pre className="p-8 text-sm text-red-600">Supabase error: {error.message}</pre>;
+  if (error) {
+    return (
+      <pre className="p-8 text-sm text-red-600">
+        Supabase error: {error.message}
+      </pre>
+    );
+  }
 
-  // Order to match the layout; extras fall into “Unplaced”
-  const placed = Object.keys(PLACE)
-    .map(k => (data ?? []).find(d => d.output_id === k))
-    .filter(Boolean) as Row[];
-  const unplaced = (data ?? []).filter(d => !PLACE[d.output_id]);
+  const byId = Object.fromEntries((data ?? []).map((r) => [r.output_id, r]));
+  const org = pick(byId, ORG);
+  const chn = pick(byId, CHN);
+  const bus = pick(byId, BUS);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-zinc-100 to-white">
-      <div className="max-w-[1400px] mx-auto px-4 py-10">
+    <main className="min-h-screen bg-zinc-100">
+      <div className="mx-auto px-4 py-10 max-w-[1960px]">
         <header className="mb-6">
           <h1 className="text-2xl font-bold">UA Cadence & Company</h1>
-          <p className="text-zinc-600">Live CMP data from Supabase. 6-column placed grid.</p>
+          <p className="text-zinc-600">Live CMP data from Supabase. 3 sectioned grids (6-col).</p>
         </header>
 
+        {/* ORGANISATION */}
+        <Section title="ORGANISATION" />
         <div className="grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 xl:auto-rows-[240px]">
-          {placed.map((row) => (
-            <div key={row.output_id} className={areaClasses(row.output_id)}>
-              <Card row={row} />
-            </div>
+          {org.map((row) => (
+            <Card key={row.output_id} row={row} />
           ))}
         </div>
 
-        {unplaced.length > 0 && (
+        {/* CHANNELS */}
+        <Section title="CHANNELS" />
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 xl:auto-rows-[336px]">
+          {chn.map((row) => {
+            const span =
+              row.output_id === 'CMP.CHNC.CHANNELS' ? 'xl:col-span-3' : '';
+            return (
+              <div key={row.output_id} className={span}>
+                <Card row={row} />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* BUSINESS */}
+        <Section title="BUSINESS" />
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 xl:auto-rows-[168px]">
+          {bus.map((row) => {
+            const span =
+              row.output_id === 'CMP.BCOT.POSE' ||
+              row.output_id === 'CMP.BCOT.STUB' ||
+              row.output_id === 'CMP.BCOT.WHYN' ||
+              row.output_id === 'CMP.BCOT.UNKN'
+                ? 'xl:row-span-2'
+                : '';
+            return (
+              <div key={row.output_id} className={span}>
+                <Card row={row} />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Unplaced (anything not in our section maps) */}
+        {data && data.length > 0 && (
           <>
-            <h2 className="mt-10 mb-3 text-sm font-semibold text-zinc-500">Unplaced</h2>
-            <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
-              {unplaced.map(row => <Card key={row.output_id} row={row} />)}
-            </div>
+            const planned = new Set([...ORG, ...CHN, ...BUS]);
+            const unplaced = (data as Row[]).filter((r) => !planned.has(r.output_id));
           </>
         )}
       </div>
