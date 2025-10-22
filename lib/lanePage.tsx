@@ -70,10 +70,15 @@ export async function LanePage({ def }: { def: LaneDefinition }) {
 
         // graceful placeholder when a block has no data yet
         if (!row) {
-          const span = [
-            b.colSpan ? `xl:col-span-${b.colSpan}` : '',
-            b.rowSpan ? `xl:row-span-${b.rowSpan}` : '',
-          ].join(' ').trim();
+function spanClasses(b: {colSpan?:number; rowSpan?:number}) {
+  const mdCol = b.colSpan && b.colSpan >= 3 ? 'md:col-span-3' : (b.colSpan && b.colSpan > 1 ? `md:col-span-${b.colSpan}` : '');
+  const xlCol = b.colSpan ? `xl:col-span-${b.colSpan}` : '';
+  const mdRow = b.rowSpan && b.rowSpan > 1 ? `md:row-span-${b.rowSpan}` : '';
+  const xlRow = b.rowSpan && b.rowSpan > 1 ? `xl:row-span-${b.rowSpan}` : '';
+  return [mdCol, xlCol, mdRow, xlRow].filter(Boolean).join(' ');
+}
+
+const span = spanClasses(b);
 
           return (
             <div key={b.id} className={span}>
@@ -90,10 +95,15 @@ export async function LanePage({ def }: { def: LaneDefinition }) {
         const kind    = (dbType || mapType) as string;
 
         const title   = def.titles?.[b.id] ?? row.output_id;
-        const span    = [
-          b.colSpan ? `xl:col-span-${b.colSpan}` : '',
-          b.rowSpan ? `xl:row-span-${b.rowSpan}` : '',
-        ].join(' ').trim();
+function spanClasses(b: {colSpan?:number; rowSpan?:number}) {
+  const mdCol = b.colSpan && b.colSpan >= 3 ? 'md:col-span-3' : (b.colSpan && b.colSpan > 1 ? `md:col-span-${b.colSpan}` : '');
+  const xlCol = b.colSpan ? `xl:col-span-${b.colSpan}` : '';
+  const mdRow = b.rowSpan && b.rowSpan > 1 ? `md:row-span-${b.rowSpan}` : '';
+  const xlRow = b.rowSpan && b.rowSpan > 1 ? `xl:row-span-${b.rowSpan}` : '';
+  return [mdCol, xlCol, mdRow, xlRow].filter(Boolean).join(' ');
+}
+
+const span = spanClasses(b);
 
         return (
           <div key={row.output_id} className={span}>
