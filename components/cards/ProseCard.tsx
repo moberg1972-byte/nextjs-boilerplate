@@ -82,11 +82,15 @@ export default function ProseCard({ row, title }: { row: Row; title: string }) {
 
   return (
     <CardShell title={title} outputId={row.output_id} shadowless={row.output_id==='CMP.CHNC.CHANNELS'}>
-      {preview ? (
-        <p className="text-sm text-zinc-700 leading-6 line-clamp-7">{preview}</p>
-      ) : (
-        <p className="text-sm text-zinc-400">No data yet.</p>
-      )}
+      <div className="mt-1 flex-1 min-h-0 overflow-auto">
+        {preview ? (
+          <p className="w-full break-words whitespace-pre-line text-sm text-zinc-700 leading-6">
+            {preview}
+          </p>
+        ) : (
+          <p className="text-sm text-zinc-400">No data yet.</p>
+        )}
+      </div>
     </CardShell>
   );
 }
