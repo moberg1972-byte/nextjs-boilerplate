@@ -5,6 +5,7 @@ export type Row = {
   job_id: string;
   output_id: string;
   content_json: any;
+  card_type?: 'PROSE' | 'NAME_VALUE' | 'TABLE' | 'FALLBACK' | null;
 };
 
 export type CardType = 'prose' | 'nameValue' | 'table' | 'fallback';
