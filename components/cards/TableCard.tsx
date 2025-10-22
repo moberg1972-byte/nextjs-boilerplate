@@ -2,29 +2,31 @@
 import CardShell from './CardShell';
 import type { Row } from '@/types/outputs';
 
-function niceLabel(k: string) {
+function niceLabel(k: string): string {
   return k
     .replace(/_/g, ' ')
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/\b(\w)/g, (m) => m.toUpperCase());
 }
 
-function summarize(v: any) {
+function summarize(v: any): string {
   if (v == null) return '—';
   if (typeof v === 'string') return v;
   if (typeof v === 'number' || typeof v === 'boolean') return String(v);
-  if (Array.isArray(v)) return v.map(summarize).join(', ');
-  // objects: shallow join of primitive fields
-  const prims = Object.entries(v)
-    .filter(([, val]) => ['string', 'number', 'boolean'].includes(typeof val))
-    .map(([k, val]) => `${niceLabel(k)}: ${String(val)}`);
-  return prims.length ? prims.join(' • ') : JSON.stringify(v);
+  if (Array.isArray(v)) return v.map((x) => summarize(x)).join(', ');
+  if (typeof v === 'object') {
+    const prims = Object.entries(v)
+      .filter(([, val]) => ['string', 'number', 'boolean'].includes(typeof val))
+      .map(([k, val]) => `${niceLabel(k)}: ${String(val)}`);
+    return prims.length ? prims.join(' • ') : JSON.stringify(v);
+  }
+  return String(v);
 }
 
 export default function TableCard({ row, title }: { row: Row; title: string }) {
-  const rows = Array.isArray(row.content_json?.rows) ? row.content_json.rows : [];
+  const rows: any[] = Array.isArray(row.content_json?.rows) ? row.content_json.rows : [];
 
-  // Infer columns from union of keys in all rows; drop obviously-internal ones.
+  // Infer columns
   const blacklist = new Set(['id', '_id', '__typename']);
   const keySet = new Set<string>();
   for (const r of rows) {
@@ -33,9 +35,10 @@ export default function TableCard({ row, title }: { row: Row; title: string }) {
     }
   }
   const inferred = Array.from(keySet);
-
-  // Optional: prefer a few common keys if they exist (UA Cadence fits this naturally)
-  const preferred = ['platform', 'format', 'channel_series', 'cadence_12m', 'cadence_90d', 'cadence_phrase', 'audience_locus', 'example_date', 'timing_nouns', 'notes'];
+  const preferred = [
+    'platform','format','channel_series','cadence_12m','cadence_90d',
+    'cadence_phrase','audience_locus','example_date','timing_nouns','notes'
+  ];
   const columns = [
     ...preferred.filter((k) => keySet.has(k)),
     ...inferred.filter((k) => !preferred.includes(k)),
