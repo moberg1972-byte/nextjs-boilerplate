@@ -17,10 +17,21 @@ function SectionHeader({ title }: { title: string }) {
   );
 }
 
+function looksLikeProse(obj: any) {
+  return typeof obj?.paragraph === 'string'
+      || typeof obj?.line === 'string'
+      || typeof obj?.half_page === 'string'
+      || typeof obj?.dossier === 'string';
+}
+
 function renderCard(kind: string, row: Row, title: string) {
+  // heuristic: NAME_VALUE with prose-only payload -> render as PROSE
+  if ((kind === 'NAME_VALUE' || kind === 'nameValue') && looksLikeProse(row.content_json)) {
+    kind = 'PROSE';
+  }
   switch (kind) {
-    case 'PROSE':      // DB value
-    case 'prose':      // code-based fallback
+    case 'PROSE':
+    case 'prose':
       return <ProseCard row={row} title={title} />;
     case 'NAME_VALUE':
     case 'nameValue':
@@ -32,6 +43,7 @@ function renderCard(kind: string, row: Row, title: string) {
       return <FallbackCard row={row} title={title} />;
   }
 }
+
 
 export async function LanePage({ def }: { def: LaneDefinition }) {
   const supabase = createClient(
