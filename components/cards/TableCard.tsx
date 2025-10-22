@@ -10,49 +10,31 @@ export default function TableCard({ row, title }: { row: Row; title: string }) {
       {!rows.length ? (
         <p className="text-sm text-zinc-400">No rows yet.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm">
+        <div className="overflow-auto max-h-full">
+          <table className="min-w-full text-xs leading-5">
             <thead className="text-zinc-600">
               <tr>
-                {[
-                  'Platform',
-                  'Format',
-                  'Series',
-                  'Cadence (12m/90d)',
-                  'Phrase',
-                  'Audience',
-                  'Example',
-                  'Timing',
-                  'Notes',
-                ].map((h) => (
-                  <th key={h} className="text-left font-medium py-2 pr-3">
-                    {h}
-                  </th>
+                {['Platform','Format','Series','Cadence (12m/90d)','Phrase','Audience','Example','Timing','Notes'].map((h) => (
+                  <th key={h} className="text-left font-medium py-1 pr-3">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {rows.map((r: any, i: number) => (
                 <tr key={i} className={i % 2 ? 'bg-white' : 'bg-zinc-50/50'}>
-                  <td className="py-2 pr-3 whitespace-nowrap">{r.platform ?? '—'}</td>
-                  <td className="py-2 pr-3 whitespace-nowrap">{r.format ?? '—'}</td>
-                  <td className="py-2 pr-3 whitespace-nowrap">{r.channel_series ?? '—'}</td>
-                  <td className="py-2 pr-3 whitespace-nowrap">
-                    {(r.cadence_12m ?? '—')} / {(r.cadence_90d ?? '—')}
+                  <td className="py-1 pr-3 whitespace-nowrap">{r.platform ?? '—'}</td>
+                  <td className="py-1 pr-3 whitespace-nowrap">{r.format ?? '—'}</td>
+                  <td className="py-1 pr-3 whitespace-nowrap">{r.channel_series ?? '—'}</td>
+                  <td className="py-1 pr-3 whitespace-nowrap">{(r.cadence_12m ?? '—')} / {(r.cadence_90d ?? '—')}</td>
+                  <td className="py-1 pr-3 whitespace-nowrap">{r.cadence_phrase ?? '—'}</td>
+                  <td className="py-1 pr-3 whitespace-nowrap">
+                    {Array.isArray(r.audience_locus) ? r.audience_locus.join(', ') : r.audience_locus ?? '—'}
                   </td>
-                  <td className="py-2 pr-3 whitespace-nowrap">{r.cadence_phrase ?? '—'}</td>
-                  <td className="py-2 pr-3 whitespace-nowrap">
-                    {typeof r.audience_locus === 'string'
-                      ? r.audience_locus
-                      : Array.isArray(r.audience_locus)
-                      ? r.audience_locus.join(', ')
-                      : '—'}
-                  </td>
-                  <td className="py-2 pr-3 whitespace-nowrap">{r.example_date ?? '—'}</td>
-                  <td className="py-2 pr-3 whitespace-nowrap">
+                  <td className="py-1 pr-3 whitespace-nowrap">{r.example_date ?? '—'}</td>
+                  <td className="py-1 pr-3 whitespace-nowrap">
                     {Array.isArray(r.timing_nouns) ? r.timing_nouns.join(', ') : r.timing_nouns ?? '—'}
                   </td>
-                  <td className="py-2 pr-3">{r.notes ?? '—'}</td>
+                  <td className="py-1 pr-3">{r.notes ?? '—'}</td>
                 </tr>
               ))}
             </tbody>
@@ -62,3 +44,4 @@ export default function TableCard({ row, title }: { row: Row; title: string }) {
     </CardShell>
   );
 }
+
