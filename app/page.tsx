@@ -1,5 +1,5 @@
 // app/page.tsx
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 
 type Row = {
   doc_id: string;
@@ -9,13 +9,14 @@ type Row = {
   content_json: any;
 };
 
+// map friendly titles
 const TITLE: Record<string, string> = {
   'CMP.TITL.LISTING': 'Game Title Listings',
   'CMP.ETHO.ESSAY': 'Company Ethos Essay',
   'CMP.ORGM.MAP': 'Organization Map & Contacts',
   'CMP.ORGM.LSEEDS': 'Language Seeds',
   'CMP.KCDC.PRIMARY': 'Primary Contact',
-  'CMP.KCDC.SECOND': 'Secondary Contact', // (fixed name)
+  'CMP.KCDC.SECOND': 'Secondary Contact',
   'CMP.CHNC.OVERVIEW': 'Channels & Cadence Overview',
   'CMP.CHNC.CHANNELS': 'UA Channels Audit Table',
   'CMP.KCDC.CULTURE': 'Culture & Momentum',
@@ -30,8 +31,8 @@ const TITLE: Record<string, string> = {
   'CMP.CHNC.GAP': 'Descriptive Gap Signal',
 };
 
+// 6-col placement (your sketch)
 const PLACE: Record<string, { col: number; row: number; colSpan?: number; rowSpan?: number }> = {
-  // Row 1
   'CMP.TITL.LISTING': { col: 1, row: 1 },
   'CMP.ETHO.ESSAY':   { col: 2, row: 1 },
   'CMP.ORGM.MAP':     { col: 3, row: 1 },
@@ -39,13 +40,11 @@ const PLACE: Record<string, { col: number; row: number; colSpan?: number; rowSpa
   'CMP.KCDC.PRIMARY': { col: 5, row: 1 },
   'CMP.KCDC.SECOND':  { col: 6, row: 1 },
 
-  // Row 2
   'CMP.CHNC.OVERVIEW': { col: 1, row: 2 },
   'CMP.CHNC.CHANNELS': { col: 2, row: 2, colSpan: 3 },
   'CMP.KCDC.CULTURE':  { col: 5, row: 2 },
   'CMP.KCDC.CLUSTER':  { col: 6, row: 2 },
 
-  // Row 3 (span two rows)
   'CMP.BCOT.POSE':    { col: 1, row: 3, rowSpan: 2 },
   'CMP.BCOT.STUB':    { col: 2, row: 3, rowSpan: 2 },
   'CMP.BCOT.WHYN':    { col: 3, row: 3, rowSpan: 2 },
@@ -53,7 +52,6 @@ const PLACE: Record<string, { col: number; row: number; colSpan?: number; rowSpa
   'CMP.CHNC.TIMINGS': { col: 5, row: 3 },
   'CMP.ORGM.GAP':     { col: 6, row: 3 },
 
-  // Row 4
   'CMP.BCOT.RISK': { col: 5, row: 4 },
   'CMP.CHNC.GAP':  { col: 6, row: 4 },
 };
@@ -97,23 +95,29 @@ function Card({ row }: { row: Row }) {
   );
 }
 
-export default async function Page({
-  searchParams,
-}: { searchParams?: { doc_id?: string } }) {
-  const docId = searchParams?.doc_id; // optional
-  const q = supabase.from('v_instruction_outputs') // or 'v_instruction_outputs_cmp'
+export default async function Page({ searchParams }: { searchParams?: { doc_id?: string } }) {
+  // Create client inline (no external import)
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  // Use your existing view/table name here:
+  const base = supabase
+    .from('v_instruction_outputs') // change to your actual view/table name if different
     .select('doc_id,lane_id,job_id,output_id,content_json')
     .eq('lane_id','CMP')
     .order('output_id', { ascending: true });
 
-  const { data, error } = docId ? await q.eq('doc_id', docId) : await q;
-  if (error) {
-    return <pre className="p-8 text-sm text-red-600">Supabase error: {error.message}</pre>;
-  }
+  const { doc_id } = searchParams ?? {};
+  const { data, error } = doc_id ? await base.eq('doc_id', doc_id) : await base;
+  if (error) return <pre className="p-8 text-sm text-red-600">Supabase error: {error.message}</pre>;
 
-  // Sort by our desired layout so the map is stable even if rows are missing
-  const ordered = Object.keys(PLACE).map(k => data?.find(d => d.output_id === k)).filter(Boolean) as Row[];
-  const unseen   = (data ?? []).filter(d => !PLACE[d.output_id]); // extras fall below
+  // Order to match the layout; extras fall into “Unplaced”
+  const placed = Object.keys(PLACE)
+    .map(k => (data ?? []).find(d => d.output_id === k))
+    .filter(Boolean) as Row[];
+  const unplaced = (data ?? []).filter(d => !PLACE[d.output_id]);
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-zinc-100 to-white">
@@ -123,23 +127,19 @@ export default async function Page({
           <p className="text-zinc-600">Live CMP data from Supabase. 6-column placed grid.</p>
         </header>
 
-        {/* Placed grid */}
         <div className="grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 xl:auto-rows-[240px]">
-          {ordered.map((row) => (
+          {placed.map((row) => (
             <div key={row.output_id} className={areaClasses(row.output_id)}>
               <Card row={row} />
             </div>
           ))}
         </div>
 
-        {/* Any outputs we didn’t plan for (safe fallback) */}
-        {unseen.length > 0 && (
+        {unplaced.length > 0 && (
           <>
             <h2 className="mt-10 mb-3 text-sm font-semibold text-zinc-500">Unplaced</h2>
             <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
-              {unseen.map(row => (
-                <Card key={row.output_id} row={row} />
-              ))}
+              {unplaced.map(row => <Card key={row.output_id} row={row} />)}
             </div>
           </>
         )}
