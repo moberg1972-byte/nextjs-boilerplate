@@ -9,12 +9,10 @@ export const CMP_DEF: LaneDefinition = {
       title: 'ORGANISATION',
       rowHeight: 300,
       blocks: [
-        { id:'CMP.TITL.LISTING' },
-        { id:'CMP.ETHO.ESSAY' },
-        { id:'CMP.ORGM.CLUSTERS' },
-        { id:'CMP.ORGM.CONTACTS' },
-        { id:'CMP.KCDC.PRIMARY' },
-        { id:'CMP.KCDC.SECOND' },
+        { id:'CMP.TITL.LISTING',   colSpan: 1 },
+        { id:'CMP.ETHO.ESSAY',   colSpan: 1 },
+        { id:'CMP.ORGM.CLUSTERS',   colSpan: 2 },
+        { id:'CMP.ORGM.CONTACTS',   colSpan: 2 },
       ],
     },
     {
@@ -23,8 +21,8 @@ export const CMP_DEF: LaneDefinition = {
       blocks: [
         { id:'CMP.CHNC.OVERVIEW' },
         { id:'CMP.CHNC.CHANNELS', colSpan: 3 },
-        { id:'CMP.KCDC.CULTURE' },
- //     { id:'CMP.KCDC.CLUSTER' },
+        { id:'CMP.BCOT.STUB' },
+ //     { id:'CMP.BCOT.WHYN' },
       ],
     },
     {
@@ -33,15 +31,16 @@ export const CMP_DEF: LaneDefinition = {
   blocks: [
     // span 2 rows each:
     { id: 'CMP.BCOT.POSE',   colSpan: 1, rowSpan: 2 },
-    { id: 'CMP.BCOT.STUB',   colSpan: 1, rowSpan: 2 },
-    { id: 'CMP.BCOT.WHYN',   colSpan: 1, rowSpan: 2 },
+    { id: 'CMP.KCDC.CULTURE',   colSpan: 1, rowSpan: 2 },
 
     // single-row cards:
+    { id: 'CMP.KCDC.PRIMARY',   colSpan: 1, rowSpan: 1 },
+    { id: 'CMP.KCDC.SECOND',   colSpan: 1, rowSpan: 1 },
     { id: 'CMP.BCOT.UNKN',   colSpan: 1, rowSpan: 1 },
-    { id: 'CMP.CHNC.TIMINGS',colSpan: 1, rowSpan: 1 },
-    { id: 'CMP.ORGM.SIGNALS',    colSpan: 1, rowSpan: 1 },
-    { id: 'CMP.BCOT.RISK',   colSpan: 1, rowSpan: 1 },
-    { id: 'CMP.CHNC.GAP',    colSpan: 1, rowSpan: 1 },
+    { id: 'CMP.BCOT.RISK',colSpan: 1, rowSpan: 1 },
+    { id: 'CMP.CHNC.TIMINGS',    colSpan: 1, rowSpan: 1 },
+    { id: 'CMP.CHNC.GAP',   colSpan: 1, rowSpan: 1 },
+    { id: 'CMP.ORGM.SIGNALS',    colSpan: 1, rowSpan: 2 },
   ],
     },
   ],
