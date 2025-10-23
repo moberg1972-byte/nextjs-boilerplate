@@ -6,6 +6,7 @@ export type Row = {
   output_id: string;
   content_json: any;
   card_type?: 'PROSE' | 'NAME_VALUE' | 'TABLE' | 'FALLBACK' | null;
+  human_title?: string;
 };
 
 export type CardType = 'prose' | 'nameValue' | 'table' | 'fallback';
