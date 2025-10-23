@@ -39,10 +39,8 @@ export const CMP_DEF: LaneDefinition = {
     { id: 'CMP.BCOT.UNKN',   colSpan: 1, rowSpan: 1 },
     { id: 'CMP.BCOT.RISK',colSpan: 1, rowSpan: 1 },
     { id: 'CMP.CHNC.TIMINGS',    colSpan: 1, rowSpan: 1 },
-    { id: 'CMP.CHNC.GAP',   colSpan: 1, rowSpan: 1 },
-
-    // span 2 rows each:
     { id: 'CMP.ORGM.SIGNALS',    colSpan: 1, rowSpan: 2 },
+    { id: 'CMP.CHNC.GAP',   colSpan: 1, rowSpan: 1 },
   ],
     },
   ],
