@@ -22,7 +22,7 @@ export const CMP_DEF: LaneDefinition = {
         { id:'CMP.CHNC.OVERVIEW' },
         { id:'CMP.CHNC.CHANNELS', colSpan: 3 },
         { id:'CMP.BCOT.STUB' },
- //     { id:'CMP.BCOT.WHYN' },
+        { id:'CMP.BCOT.WHYN' },
       ],
     },
     {
@@ -40,6 +40,8 @@ export const CMP_DEF: LaneDefinition = {
     { id: 'CMP.BCOT.RISK',colSpan: 1, rowSpan: 1 },
     { id: 'CMP.CHNC.TIMINGS',    colSpan: 1, rowSpan: 1 },
     { id: 'CMP.CHNC.GAP',   colSpan: 1, rowSpan: 1 },
+
+    // span 2 rows each:
     { id: 'CMP.ORGM.SIGNALS',    colSpan: 1, rowSpan: 2 },
   ],
     },
