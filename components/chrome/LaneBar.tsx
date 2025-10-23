@@ -2,10 +2,18 @@
 import Link from 'next/link';
 
 const LANES = ['CMP','PRO','DEL','REC','ANA','PRJ','UAP','CRR','MPR','BUR'] as const;
+
 const LANE_NAME: Record<string,string> = {
-  CMP: 'Company', PRO: 'Promise', DEL: 'Delivery', REC: 'Reception',
-  ANA: 'Analysis', PRJ: 'Projection', UAP: 'UA Pre-Brief', CRR: 'Creative Rail',
-  MPR: 'Mini-Arc Pattern', BUR: 'Business Rail'
+  CMP: 'Company',
+  PRO: 'Promise',
+  DEL: 'Delivery',
+  REC: 'Reception',
+  ANA: 'Analysis',
+  PRJ: 'Projection',
+  UAP: 'UA Pre-Brief',
+  CRR: 'Creative Rail',
+  MPR: 'Mini-Arc Pattern',
+  BUR: 'Business Rail',
 };
 
 export default function LaneBar({ current }: { current: string }) {
@@ -14,9 +22,10 @@ export default function LaneBar({ current }: { current: string }) {
       <h1 className="font-ptserif text-5xl font-bold tracking-tight text-zinc-800">
         {LANE_NAME[current] ?? current}
       </h1>
+
       <div className="flex items-center gap-6">
         <div className="flex flex-wrap gap-2">
-          {LANES.map(id => {
+          {LANES.map((id) => {
             const active = id === current;
             return (
               <Link
@@ -26,7 +35,7 @@ export default function LaneBar({ current }: { current: string }) {
                   'rounded-full px-3.5 py-1.5 text-xs font-semibold',
                   active
                     ? 'bg-zinc-900 text-white shadow'
-                    : 'bg-white text-zinc-700 hover:bg-zinc-100 shadow-sm'
+                    : 'bg-white text-zinc-700 hover:bg-zinc-100 shadow-sm',
                 ].join(' ')}
               >
                 {id}
@@ -34,9 +43,11 @@ export default function LaneBar({ current }: { current: string }) {
             );
           })}
         </div>
+
         <div className="font-ptserif text-5xl font-bold tracking-tight text-zinc-900">
-  OracleOS®
-</div>
+          OracleOS®
+        </div>
+      </div>
     </div>
   );
 }
