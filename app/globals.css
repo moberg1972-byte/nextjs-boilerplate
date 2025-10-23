@@ -3,6 +3,11 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-ptserif: ui-serif;
+}
+
+.font-ptserif {
+  font-family: var(--font-ptserif), ui-serif, Georgia, 'Times New Roman', serif;
 }
 
 @theme inline {
