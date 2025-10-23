@@ -11,8 +11,8 @@ export const CMP_DEF: LaneDefinition = {
       blocks: [
         { id:'CMP.TITL.LISTING' },
         { id:'CMP.ETHO.ESSAY' },
-        { id:'CMP.ORGM.MAP' },
-        { id:'CMP.ORGM.LSEEDS' },
+        { id:'CMP.ORGM.CLUSTERS' },
+        { id:'CMP.ORGM.CONTACTS' },
         { id:'CMP.KCDC.PRIMARY' },
         { id:'CMP.KCDC.SECOND' },
       ],
@@ -39,7 +39,7 @@ export const CMP_DEF: LaneDefinition = {
     // single-row cards:
     { id: 'CMP.BCOT.UNKN',   colSpan: 1, rowSpan: 1 },
     { id: 'CMP.CHNC.TIMINGS',colSpan: 1, rowSpan: 1 },
-    { id: 'CMP.ORGM.GAP',    colSpan: 1, rowSpan: 1 },
+    { id: 'CMP.ORGM.SIGNALS',    colSpan: 1, rowSpan: 1 },
     { id: 'CMP.BCOT.RISK',   colSpan: 1, rowSpan: 1 },
     { id: 'CMP.CHNC.GAP',    colSpan: 1, rowSpan: 1 },
   ],
