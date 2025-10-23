@@ -1,24 +1,25 @@
 // lib/lanePage.tsx
 import { supabase } from '@/lib/supabase';
-import type { LaneDefinition, Row } from '@/types/outputs'; // Import Row from types
+import type { LaneDefinition, Row } from '@/types/outputs';
 import ProseCard from '@/components/cards/ProseCard';
 import NameValueCard from '@/components/cards/NameValueCard';
 import TableCard from '@/components/cards/TableCard';
 import FallbackCard from '@/components/cards/FallbackCard';
 
-// Remove the local Row type definition - use the imported one instead
+// --- helper: prettify when no human_title / override is present
+function prettifyId(id: string) {
+  const parts = id.split('.');
+  const last = parts[2] ?? id;
+  return last.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+}
 
 function spanClasses(b: { colSpan?: number; rowSpan?: number }) {
   const cls: string[] = ['min-h-0'];
-  
-  // Must use explicit Tailwind classes (not template strings)
   if (b.colSpan === 2) cls.push('md:col-span-2 xl:col-span-2');
   if (b.colSpan === 3) cls.push('md:col-span-3 xl:col-span-3');
   if (b.colSpan === 4) cls.push('xl:col-span-4');
-  
   if (b.rowSpan === 2) cls.push('md:row-span-2 xl:row-span-2');
   if (b.rowSpan === 3) cls.push('md:row-span-3 xl:row-span-3');
-  
   return cls.join(' ');
 }
 
@@ -30,25 +31,24 @@ function kindFor(row: Row | undefined, def: LaneDefinition, b: any) {
 
 function renderCard(kind: string, row: Row | undefined, title: string, outputId: string) {
   if (!row) {
-    // Create a minimal fallback row with proper typing
     const fallbackRow: Row = {
       doc_id: '',
       lane_id: '',
       job_id: '',
       output_id: outputId,
       content_json: null,
-      card_type: 'FALLBACK', // Use the literal type instead of null
+      card_type: 'FALLBACK',
     };
     return <FallbackCard row={fallbackRow} title={title} />;
   }
-  
-  // Heuristic: if DB says NAME_VALUE but payload is prose-only, switch to PROSE
-  const cj = row.content_json || {};
+
+  // Heuristic: if DB says NAME_VALUE but payload looks prose-like, switch
+  const cj: any = row.content_json || {};
   const proseLike = ['paragraph', 'line', 'half_page', 'dossier'].some(
     k => typeof cj?.[k] === 'string'
   );
   if (kind === 'NAME_VALUE' && proseLike) kind = 'PROSE';
-  
+
   switch (kind) {
     case 'NAME_VALUE':
       return <NameValueCard row={row} title={title} />;
@@ -63,21 +63,24 @@ function renderCard(kind: string, row: Row | undefined, title: string, outputId:
 export default async function LanePage({ def }: { def: LaneDefinition }) {
   const { data, error } = await supabase
     .from('v_instruction_outputs_v2')
-    .select('doc_id,lane_id,job_id,output_id,content_json,card_type')
+    // ▼ include human_title so we can render it
+    .select('doc_id,lane_id,job_id,output_id,content_json,card_type,human_title')
     .eq('lane_id', def.laneId)
     .order('output_id', { ascending: true });
 
   if (error) {
     return (
-      <pre className="p-4 text-sm text-red-600">
-        Supabase error: {error.message}
-      </pre>
+      <pre className="p-4 text-sm text-red-600">Supabase error: {error.message}</pre>
     );
   }
 
   const rows = (data ?? []) as Row[];
   const byId: Record<string, Row> = {};
   for (const r of rows) byId[r.output_id] = r;
+
+  // ▼ title resolver: human_title → layout overrides → prettified id
+  const titleFor = (id: string) =>
+    (byId[id]?.human_title?.trim()) || def.titles?.[id] || prettifyId(id);
 
   return (
     <main className="px-6 py-6">
@@ -93,9 +96,8 @@ export default async function LanePage({ def }: { def: LaneDefinition }) {
             {sec.blocks.map((b) => {
               const row = byId[b.id];
               const kind = kindFor(row, def, b);
-              const title = def.titles?.[b.id] ?? b.id;
+              const title = titleFor(b.id); // ▼ use resolved title
               const span = spanClasses(b);
-              
               return (
                 <div key={b.id} className={span}>
                   <div className="h-full">
