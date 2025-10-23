@@ -7,7 +7,7 @@ export const CMP_DEF: LaneDefinition = {
   sections: [
     {
       title: 'ORGANISATION',
-      rowHeight: 280,
+      rowHeight: 300,
       blocks: [
         { id:'CMP.TITL.LISTING' },
         { id:'CMP.ETHO.ESSAY' },
@@ -19,7 +19,7 @@ export const CMP_DEF: LaneDefinition = {
     },
     {
       title: 'CHANNELS',
-      rowHeight: 336,
+      rowHeight: 350,
       blocks: [
         { id:'CMP.CHNC.OVERVIEW' },
         { id:'CMP.CHNC.CHANNELS', colSpan: 3 },
