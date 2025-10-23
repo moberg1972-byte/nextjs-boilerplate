@@ -24,7 +24,7 @@ export const CMP_DEF: LaneDefinition = {
         { id:'CMP.CHNC.OVERVIEW' },
         { id:'CMP.CHNC.CHANNELS', colSpan: 3 },
         { id:'CMP.KCDC.CULTURE' },
-        { id:'CMP.KCDC.CLUSTER' },
+ //     { id:'CMP.KCDC.CLUSTER' },
       ],
     },
     {
