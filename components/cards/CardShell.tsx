@@ -3,16 +3,8 @@ import React from 'react';
 import { UI } from '@/lib/ui';
 
 // components/cards/CardShell.tsx
-export default function CardShell({
-  title,
-  outputId,
-  shadowless = false,
-  children,
-}: {
-  title: string;
-  outputId: string;
-  shadowless?: boolean;
-  children: React.ReactNode;
+export default function CardShell({ title, outputId, shadowless = false, children }:{
+  title: string; outputId: string; shadowless?: boolean; children: React.ReactNode;
 }) {
   return (
     <div className={`h-full rounded-2xl bg-white ${shadowless ? '' : 'shadow-[0_2px_20px_rgba(0,0,0,0.06)]'} p-4 flex flex-col`}>
