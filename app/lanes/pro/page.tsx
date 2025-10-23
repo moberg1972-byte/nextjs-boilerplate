@@ -6,7 +6,7 @@ import RealtimeRefresher from '@/components/RealtimeRefresher';
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
-export default async function Page() {
+export default function Page() {
   return (
     <>
       <RealtimeRefresher laneId="PRO" />
