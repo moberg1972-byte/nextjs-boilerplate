@@ -7,7 +7,7 @@ export default function TableCard({ row, title }: { row: Row; title: string }) {
   const rows: any[][] = Array.isArray(cj.rows) ? cj.rows : [];
 
   return (
-    <CardShell title={title} outputId={row.output_id}>
+    <CardShell title={title} outputId={row.output_id} variant="flat">
       {rows.length === 0 ? (
         <p className="text-sm text-zinc-400">No data yet.</p>
       ) : (
