@@ -36,8 +36,20 @@ function kindFor(row: Row | undefined, def: LaneDefinition, b: any) {
   return String(hint).toUpperCase();
 }
 
-function renderCard(kind: string, row: Row | undefined, title: string) {
-  if (!row) return <FallbackCard title={title} outputId={title} />;
+function renderCard(kind: string, row: Row | undefined, title: string, outputId: string) {
+  if (!row) {
+    // Create a minimal fallback row
+    const fallbackRow: Row = {
+      doc_id: '',
+      lane_id: '',
+      job_id: '',
+      output_id: outputId,
+      content_json: null,
+      card_type: null,
+      human_title: title,
+    };
+    return <FallbackCard row={fallbackRow} title={title} />;
+  }
   
   // Heuristic: if DB says NAME_VALUE but payload is prose-only, switch to PROSE
   const cj = row.content_json || {};
@@ -88,19 +100,19 @@ export default async function LanePage({ def }: { def: LaneDefinition }) {
             style={{ gridAutoRows: `${sec.rowHeight}px` }}
           >
             {sec.blocks.map((b) => {
-              const row = byId[b.id];
-              const kind = kindFor(row, def, b);
-              const title = row?.human_title ?? def.titles?.[b.id] ?? b.id;
-              const span = spanClasses(b);
-              
-              return (
-                <div key={b.id} className={span}>
-                  <div className="h-full">
-                    {renderCard(kind, row, title)}
-                  </div>
-                </div>
-              );
-            })}
+  const row = byId[b.id];
+  const kind = kindFor(row, def, b);
+  const title = row?.human_title ?? def.titles?.[b.id] ?? b.id;
+  const span = spanClasses(b);
+  
+  return (
+    <div key={b.id} className={span}>
+      <div className="h-full">
+        {renderCard(kind, row, title, b.id)}
+      </div>
+    </div>
+  );
+})}
           </div>
         </section>
       ))}
