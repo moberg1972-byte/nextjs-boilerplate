@@ -11,7 +11,7 @@ const LANE_NAME: Record<string,string> = {
 export default function LaneBar({ current }: { current: string }) {
   return (
     <div className="mb-4 flex items-end justify-between">
-      <h1 className="text-5xl font-extrabold tracking-tight text-zinc-800">
+      <h1 className="font-ptserif text-5xl font-bold tracking-tight text-zinc-800">
         {LANE_NAME[current] ?? current}
       </h1>
       <div className="flex items-center gap-6">
@@ -34,8 +34,9 @@ export default function LaneBar({ current }: { current: string }) {
             );
           })}
         </div>
-        <div className="text-5xl font-extrabold tracking-tight text-zinc-900">OracleOS®</div>
-      </div>
+        <div className="font-ptserif text-5xl font-bold tracking-tight text-zinc-900">
+  OracleOS®
+</div>
     </div>
   );
 }
