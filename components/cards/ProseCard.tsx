@@ -2,14 +2,46 @@
 import CardShell from './CardShell';
 import type { Row } from '@/types/outputs';
 
-function extractPreview(content: any): string | null {
+function extractSingle(content: any): string | null {
   if (!content) return null;
   if (typeof content === 'string') return content;
-  if (content.paragraph) return content.paragraph;
-  if (content.line) return content.line;
-  if (content.half_page) return content.half_page;
-  if (content.dossier) return content.dossier;
+  if (typeof content.paragraph === 'string') return content.paragraph;
+  if (typeof content.line === 'string') return content.line;
+  if (typeof content.half_page === 'string') return content.half_page;
+  if (typeof content.dossier === 'string') return content.dossier;
+  if (typeof content.gap === 'string') return content.gap;        // <-- GAP (string)
+  if (typeof content?.gap?.line === 'string') return content.gap.line; // <-- GAP (object)
   return null;
+}
+
+function renderSignals(content: any) {
+  const list = Array.isArray(content?.signals) ? content.signals : null;
+  if (!list || list.length === 0) return null;
+
+  return (
+    <div className="space-y-2">
+      {typeof content.summary === 'string' && content.summary.trim() && (
+        <p className="text-sm leading-6 text-zinc-700 whitespace-pre-wrap break-words">
+          {content.summary.trim()}
+        </p>
+      )}
+      <ul className="list-disc list-inside text-sm leading-6 text-zinc-700">
+        {list.map((s: any, i: number) => (
+          <li key={i}>
+            {s.date ? `${s.date} — ` : ''}
+            {s.text}
+            {s.pointer ? (
+              <>
+                {' '}
+                (<a className="underline" href={s.pointer} target="_blank" rel="noreferrer">source</a>)
+              </>
+            ) : null}
+            {s.tag ? ` [${s.tag}]` : null}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 function renderList(content: any) {
@@ -19,7 +51,6 @@ function renderList(content: any) {
       <ul className="list-disc list-inside text-sm leading-6 text-zinc-700">
         {content.items.map((it: any, i: number) => {
           if (typeof it === 'string') return <li key={i}>{it}</li>;
-          // Join common fields for readability
           const main = it.beat ?? it.unknown ?? it.risk ?? it.text ?? '';
           const bits = [
             it.date,
@@ -35,7 +66,7 @@ function renderList(content: any) {
               {it.pointer ? (
                 <>
                   {' '}
-                  (<a className="underline" href={it.pointer} target="_blank">source</a>)
+                  (<a className="underline" href={it.pointer} target="_blank" rel="noreferrer">source</a>)
                 </>
               ) : null}
             </li>
@@ -45,7 +76,7 @@ function renderList(content: any) {
     );
   }
 
-  // rows: array of strings or objects (e.g., beats)
+  // rows: array of strings or objects (beats etc.)
   if (Array.isArray(content?.rows) && content.rows.length) {
     return (
       <ul className="list-disc list-inside text-sm leading-6 text-zinc-700">
@@ -60,7 +91,7 @@ function renderList(content: any) {
               {r.pointer ? (
                 <>
                   {' '}
-                  (<a className="underline" href={r.pointer} target="_blank">source</a>)
+                  (<a className="underline" href={r.pointer} target="_blank" rel="noreferrer">source</a>)
                 </>
               ) : null}
             </li>
@@ -74,16 +105,19 @@ function renderList(content: any) {
 }
 
 export default function ProseCard({ row, title }: { row: Row; title: string }) {
-  const content = row.content_json;
-  const preview = extractPreview(content);
+  const content = row?.content_json;
+  const single = extractSingle(content);
+  const signals = renderSignals(content);
   const list = renderList(content);
 
   return (
     <CardShell title={title} outputId={row.output_id}>
-      {preview ? (
+      {single ? (
         <p className="w-full break-words whitespace-pre-line text-sm text-zinc-700 leading-6">
-          {preview}
+          {single}
         </p>
+      ) : signals ? (
+        signals
       ) : list ? (
         list
       ) : (
