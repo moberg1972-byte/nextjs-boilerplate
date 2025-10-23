@@ -2,14 +2,18 @@
 export default function CardShell({
   title,
   outputId,
+  shadowless = false,
   children,
 }: {
   title: string;
   outputId: string;
+  shadowless?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-full rounded-2xl bg-white shadow-[0_2px_20px_rgba(0,0,0,0.06)] p-4 flex flex-col">
+    <div className={`h-full rounded-2xl bg-white p-4 flex flex-col ${
+      shadowless ? '' : 'shadow-[0_2px_20px_rgba(0,0,0,0.06)]'
+    }`}>
       <div className="mb-2 flex-shrink-0">
         <div className="text-[18px] font-semibold leading-6 text-zinc-900">
           {title}
