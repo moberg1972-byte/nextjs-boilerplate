@@ -11,19 +11,41 @@ type Row = {
   lane_id: string;
   job_id: string;
   output_id: string;
+  content_json: any;
   card_type: string | null;
   human_title: string | null;
-  content_json: any;
 };
 
+function spanClasses(b: { colSpan?: number; rowSpan?: number }) {
+  const cls: string[] = ['min-h-0'];
+  
+  // Must use explicit Tailwind classes (not template strings)
+  if (b.colSpan === 2) cls.push('md:col-span-2 xl:col-span-2');
+  if (b.colSpan === 3) cls.push('md:col-span-3 xl:col-span-3');
+  if (b.colSpan === 4) cls.push('xl:col-span-4');
+  
+  if (b.rowSpan === 2) cls.push('md:row-span-2 xl:row-span-2');
+  if (b.rowSpan === 3) cls.push('md:row-span-3 xl:row-span-3');
+  
+  return cls.join(' ');
+}
+
 function kindFor(row: Row | undefined, def: LaneDefinition, b: any) {
-  if (!row) return 'fallback';
-  // prefer DB hint, then layout hint
-  return (row.card_type || def.cardMap?.[b.id] || 'prose').toUpperCase();
+  if (!row) return 'FALLBACK';
+  const hint = row.card_type || def.cardMap?.[b.id] || 'PROSE';
+  return String(hint).toUpperCase();
 }
 
 function renderCard(kind: string, row: Row | undefined, title: string) {
   if (!row) return <FallbackCard title={title} outputId={title} />;
+  
+  // Heuristic: if DB says NAME_VALUE but payload is prose-only, switch to PROSE
+  const cj = row.content_json || {};
+  const proseLike = ['paragraph', 'line', 'half_page', 'dossier'].some(
+    k => typeof cj?.[k] === 'string'
+  );
+  if (kind === 'NAME_VALUE' && proseLike) kind = 'PROSE';
+  
   switch (kind) {
     case 'NAME_VALUE':
       return <NameValueCard row={row} title={title} />;
@@ -35,22 +57,7 @@ function renderCard(kind: string, row: Row | undefined, title: string) {
   }
 }
 
-function spanClasses(b: { colSpan?: number; rowSpan?: number }) {
-  const cls: string[] = [];
-  if (b.colSpan) {
-    cls.push(`xl:col-span-${b.colSpan}`);
-    if (b.colSpan >= 2) cls.push(`md:col-span-${Math.min(3, b.colSpan)}`);
-  }
-  if (b.rowSpan && b.rowSpan > 1) {
-    cls.push(`md:row-span-${b.rowSpan}`, `xl:row-span-${b.rowSpan}`);
-  }
-  // wrapper must not clip the card’s internal scroll
-  cls.push('min-h-0');
-  return cls.join(' ');
-}
-
 export default async function LanePage({ def }: { def: LaneDefinition }) {
-  // fetch
   const { data, error } = await supabase
     .from('v_instruction_outputs_v2')
     .select('doc_id,lane_id,job_id,output_id,content_json,card_type,human_title')
@@ -58,7 +65,11 @@ export default async function LanePage({ def }: { def: LaneDefinition }) {
     .order('output_id', { ascending: true });
 
   if (error) {
-    return <pre className="p-4 text-sm text-red-600">Supabase error: {error.message}</pre>;
+    return (
+      <pre className="p-4 text-sm text-red-600">
+        Supabase error: {error.message}
+      </pre>
+    );
   }
 
   const rows = (data ?? []) as Row[];
@@ -67,33 +78,25 @@ export default async function LanePage({ def }: { def: LaneDefinition }) {
 
   return (
     <main className="px-6 py-6">
-      <h1 className="text-lg font-semibold">CMP — Review</h1>
-      <p className="text-xs text-zinc-500 mb-4">
-        Live data from Supabase. Sectioned, 6-column grid.
-      </p>
-
       {def.sections.map((sec) => (
         <section key={sec.title} className="min-h-0">
-          {/* Section header */}
           <h3 className="mt-8 mb-3 text-xs font-semibold tracking-wide text-zinc-500">
             {sec.title}
           </h3>
-
-          {/* Section grid with hard row height (inline style prevents purge) */}
           <div
             className="grid gap-4 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 min-h-0"
             style={{ gridAutoRows: `${sec.rowHeight}px` }}
           >
             {sec.blocks.map((b) => {
               const row = byId[b.id];
+              const kind = kindFor(row, def, b);
               const title = row?.human_title ?? def.titles?.[b.id] ?? b.id;
-              const classes = spanClasses(b);
-
+              const span = spanClasses(b);
+              
               return (
-                <div key={b.id} className={classes}>
-                  {/* h-full is critical: card must fill the grid cell */}
+                <div key={b.id} className={span}>
                   <div className="h-full">
-                    {renderCard(kindFor(row, def, b), row, title)}
+                    {renderCard(kind, row, title)}
                   </div>
                 </div>
               );
