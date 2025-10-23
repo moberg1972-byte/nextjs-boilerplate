@@ -3,9 +3,9 @@ import Link from 'next/link';
 
 const LANES = ['CMP','PRO','DEL','REC','ANA','PRJ','UAP','CRR','MPR','BUR'] as const;
 const LANE_NAME: Record<string,string> = {
-  CMP: 'Company', PRO: 'Production', DEL: 'Delivery', REC: 'Research',
-  ANA: 'Analysis', PRJ: 'Projects', UAP: 'UA/Perf', CRR: 'Creator',
-  MPR: 'Media/PR', BUR: 'Bureau'
+  CMP: 'Company', PRO: 'Promise', DEL: 'Delivery', REC: 'Reception',
+  ANA: 'Analysis', PRJ: 'Projection', UAP: 'UA Pre-Brief', CRR: 'Creative Rail',
+  MPR: 'Mini-Arc Pattern', BUR: 'Business Rail'
 };
 
 export default function LaneBar({ current }: { current: string }) {
