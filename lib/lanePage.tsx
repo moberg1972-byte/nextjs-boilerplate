@@ -1,20 +1,12 @@
 // lib/lanePage.tsx
 import { supabase } from '@/lib/supabase';
-import type { LaneDefinition } from '@/types/outputs';
+import type { LaneDefinition, Row } from '@/types/outputs'; // Import Row from types
 import ProseCard from '@/components/cards/ProseCard';
 import NameValueCard from '@/components/cards/NameValueCard';
 import TableCard from '@/components/cards/TableCard';
 import FallbackCard from '@/components/cards/FallbackCard';
 
-type Row = {
-  doc_id: string;
-  lane_id: string;
-  job_id: string;
-  output_id: string;
-  content_json: any;
-  card_type: string | null;
-  human_title: string | null;
-};
+// Remove the local Row type definition - use the imported one instead
 
 function spanClasses(b: { colSpan?: number; rowSpan?: number }) {
   const cls: string[] = ['min-h-0'];
@@ -38,15 +30,14 @@ function kindFor(row: Row | undefined, def: LaneDefinition, b: any) {
 
 function renderCard(kind: string, row: Row | undefined, title: string, outputId: string) {
   if (!row) {
-    // Create a minimal fallback row
+    // Create a minimal fallback row with proper typing
     const fallbackRow: Row = {
       doc_id: '',
       lane_id: '',
       job_id: '',
       output_id: outputId,
       content_json: null,
-      card_type: null,
-      human_title: title,
+      card_type: 'FALLBACK', // Use the literal type instead of null
     };
     return <FallbackCard row={fallbackRow} title={title} />;
   }
@@ -72,7 +63,7 @@ function renderCard(kind: string, row: Row | undefined, title: string, outputId:
 export default async function LanePage({ def }: { def: LaneDefinition }) {
   const { data, error } = await supabase
     .from('v_instruction_outputs_v2')
-    .select('doc_id,lane_id,job_id,output_id,content_json,card_type,human_title')
+    .select('doc_id,lane_id,job_id,output_id,content_json,card_type')
     .eq('lane_id', def.laneId)
     .order('output_id', { ascending: true });
 
@@ -100,19 +91,19 @@ export default async function LanePage({ def }: { def: LaneDefinition }) {
             style={{ gridAutoRows: `${sec.rowHeight}px` }}
           >
             {sec.blocks.map((b) => {
-  const row = byId[b.id];
-  const kind = kindFor(row, def, b);
-  const title = row?.human_title ?? def.titles?.[b.id] ?? b.id;
-  const span = spanClasses(b);
-  
-  return (
-    <div key={b.id} className={span}>
-      <div className="h-full">
-        {renderCard(kind, row, title, b.id)}
-      </div>
-    </div>
-  );
-})}
+              const row = byId[b.id];
+              const kind = kindFor(row, def, b);
+              const title = def.titles?.[b.id] ?? b.id;
+              const span = spanClasses(b);
+              
+              return (
+                <div key={b.id} className={span}>
+                  <div className="h-full">
+                    {renderCard(kind, row, title, b.id)}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </section>
       ))}
