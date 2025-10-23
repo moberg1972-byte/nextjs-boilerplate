@@ -1,10 +1,16 @@
-export const dynamic = 'force-dynamic';   // no static caching
-export const revalidate = 0;              // don't ISR-cache either
-
-// app/(lanes)/cmp/page.tsx
-import { LanePage } from '@/lib/lanePage';
+// app/lanes/cmp/page.tsx
+import LanePage from '@/lib/lanePage';
 import { CMP_DEF } from '@/lib/layouts/cmp';
+import RealtimeRefresher from '@/components/RealtimeRefresher';
+
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function Page() {
-  return <LanePage def={CMP_DEF} />;
+  return (
+    <>
+      <RealtimeRefresher laneId="CMP" />
+      <LanePage def={CMP_DEF} />
+    </>
+  );
 }
