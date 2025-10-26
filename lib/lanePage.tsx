@@ -81,16 +81,17 @@ export default async function LanePage({ def }: { def: LaneDefinition }) {
   // UPDATED layout: wider outer padding, larger gaps, lighter shadows
 return (
   <main className="bg-zinc-100 min-h-screen">
-    {/* Header, widened ~20% */}
-    <div className="mx-auto max-w-[1840px] px-5 md:px-8 xl:px-10 py-4 md:py-5">
+    {/* Header — same width, less bottom padding */}
+    <div className="mx-auto max-w-[1840px] pt-4 md:pt-5 pb-2 md:pb-3 px-5 md:px-8 xl:px-10">
       <LaneBar current={def.laneId} />
     </div>
 
-    {/* Content, same widened container */}
-    <div className="mx-auto max-w-[1840px] px-5 md:px-8 xl:px-10 py-6 md:py-7">
+    {/* Content — same width, smaller top padding */}
+    <div className="mx-auto max-w-[1840px] pt-3 md:pt-4 pb-6 md:pb-7 px-5 md:px-8 xl:px-10">
       {def.sections.map((sec) => (
         <section key={sec.title} className="min-h-0">
-          <h3 className="mt-6 mb-3 text-xs font-semibold tracking-wide text-zinc-600">
+          {/* Section label — smaller top margin */}
+          <h3 className="mt-3 md:mt-4 mb-3 text-xs font-semibold tracking-wide text-zinc-600">
             {sec.title}
           </h3>
 
@@ -123,5 +124,4 @@ return (
     </div>
   </main>
 );
-
 }
