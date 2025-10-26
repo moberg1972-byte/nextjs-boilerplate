@@ -32,6 +32,7 @@ export const CMP_DEF: LaneDefinition = {
     // span 2 rows each:
     { id: 'CMP.BCOT.POSE',   colSpan: 1, rowSpan: 2 },
     { id: 'CMP.KCDC.CULTURE',   colSpan: 1, rowSpan: 2 },
+    { id: 'CMP.ORGM.SIGNALS',    colSpan: 1, rowSpan: 2 },
 
     // single-row cards:
     { id: 'CMP.KCDC.PRIMARY',   colSpan: 1, rowSpan: 1 },
@@ -39,8 +40,7 @@ export const CMP_DEF: LaneDefinition = {
     { id: 'CMP.BCOT.UNKN',   colSpan: 1, rowSpan: 1 },
     { id: 'CMP.BCOT.RISK',colSpan: 1, rowSpan: 1 },
     { id: 'CMP.CHNC.TIMINGS',    colSpan: 1, rowSpan: 1 },
-    { id: 'CMP.CHNC.GAP',   colSpan: 1, rowSpan: 1 },
-    { id: 'CMP.ORGM.SIGNALS',    colSpan: 1, rowSpan: 2 },
+    { id: 'CMP.CHNC.GAP',   colSpan: 1, rowSpan: 1 },    
   ],
     },
   ],
