@@ -79,46 +79,48 @@ export default async function LanePage({ def }: { def: LaneDefinition }) {
     (byId[id]?.human_title?.trim()) || def.titles?.[id] || prettifyId(id);
 
   // UPDATED layout: wider outer padding, larger gaps, lighter shadows
-  return (
-    <main className="bg-zinc-100 min-h-screen">
-      {/* NEW header */}
+ return (
+  <main className="bg-zinc-100 min-h-screen">
+    {/* Header now constrained to same width */}
+    <div className="mx-auto max-w-screen-2xl px-5 md:px-8 xl:px-10 py-4 md:py-5">
       <LaneBar current={def.laneId} />
+    </div>
 
-      <div className="mx-auto max-w-screen-2xl px-6 md:px-10 xl:px-14 py-6 md:py-8">
-        {def.sections.map((sec) => (
-          <section key={sec.title} className="min-h-0">
-            <h3 className="mt-6 mb-3 text-xs font-semibold tracking-wide text-zinc-600">
-              {sec.title}
-            </h3>
+    {/* Page content container (moderate, ~half the previous change) */}
+    <div className="mx-auto max-w-screen-2xl px-5 md:px-8 xl:px-10 py-6 md:py-7">
+      {def.sections.map((sec) => (
+        <section key={sec.title} className="min-h-0">
+          <h3 className="mt-6 mb-3 text-xs font-semibold tracking-wide text-zinc-600">
+            {sec.title}
+          </h3>
 
-            <div
-              className="grid gap-5 md:gap-6 xl:gap-8 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 min-h-0"
-              style={{ gridAutoRows: `${sec.rowHeight}px` }}
-            >
-              {sec.blocks.map((b) => {
-                const row = byId[b.id];
-                const kind = kindFor(row, def, b);
-                const title = titleFor(b.id);
-                const span = spanClasses(b);
+          <div
+            className="grid gap-5 xl:gap-6 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 min-h-0"
+            style={{ gridAutoRows: `${sec.rowHeight}px` }}
+          >
+            {sec.blocks.map((b) => {
+              const row = byId[b.id];
+              const kind = kindFor(row, def, b);
+              const title = titleFor(b.id);
+              const span = spanClasses(b);
 
-                // Wrapper applies the shadow rule per card type
-                const isTable = (row?.card_type ?? '').toUpperCase() === 'TABLE';
-                const wrapperClass = isTable
-                  ? 'h-full'
-                  : 'h-full drop-shadow-[0_8px_20px_rgba(0,0,0,0.08)]'; // lighter
+              const isTable = (row?.card_type ?? '').toUpperCase() === 'TABLE';
+              const wrapperClass = isTable
+                ? 'h-full'
+                : 'h-full drop-shadow-[0_9px_22px_rgba(0,0,0,0.09)]'; // slightly lighter than original
 
-                return (
-                  <div key={b.id} className={span}>
-                    <div className={wrapperClass}>
-                      {renderCard(kind, row, title, b.id)}
-                    </div>
+              return (
+                <div key={b.id} className={span}>
+                  <div className={wrapperClass}>
+                    {renderCard(kind, row, title, b.id)}
                   </div>
-                );
-              })}
-            </div>
-          </section>
-        ))}
-      </div>
-    </main>
-  );
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ))}
+    </div>
+  </main>
+);
 }
