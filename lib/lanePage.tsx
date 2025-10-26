@@ -81,22 +81,26 @@ export default async function LanePage({ def }: { def: LaneDefinition }) {
   // UPDATED layout: wider outer padding, larger gaps, lighter shadows
 return (
   <main className="bg-zinc-100 min-h-screen">
-    {/* Header — same width, less bottom padding */}
-    <div className="mx-auto max-w-[1840px] pt-4 md:pt-5 pb-2 md:pb-3 px-5 md:px-8 xl:px-10">
+    {/* Header — same (wider) width */}
+    <div className="mx-auto max-w-[2024px] pt-4 md:pt-5 pb-2 md:pb-3 px-5 md:px-8 xl:px-10">
       <LaneBar current={def.laneId} />
     </div>
 
-    {/* Content — same width, smaller top padding */}
-    <div className="mx-auto max-w-[1840px] pt-3 md:pt-4 pb-6 md:pb-7 px-5 md:px-8 xl:px-10">
+    {/* Content — same (wider) width */}
+    <div className="mx-auto max-w-[2024px] pt-3 md:pt-4 pb-6 md:pb-7 px-5 md:px-8 xl:px-10">
       {def.sections.map((sec) => (
         <section key={sec.title} className="min-h-0">
-          {/* Section label — smaller top margin */}
+          {/* Section label — tighter top spacing */}
           <h3 className="mt-3 md:mt-4 mb-3 text-xs font-semibold tracking-wide text-zinc-600">
             {sec.title}
           </h3>
 
           <div
-            className="grid gap-5 xl:gap-6 grid-cols-1 md:grid-cols-3 xl:grid-cols-6 min-h-0"
+            className="
+              grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 min-h-0
+              gap-x-4 xl:gap-x-5   /*  -20% horizontal spacing  */
+              gap-y-6 xl:gap-y-7   /*  +20% vertical spacing    */
+            "
             style={{ gridAutoRows: `${sec.rowHeight}px` }}
           >
             {sec.blocks.map((b) => {
@@ -108,7 +112,7 @@ return (
               const isTable = (row?.card_type ?? '').toUpperCase() === 'TABLE';
               const wrapperClass = isTable
                 ? 'h-full'
-                : 'h-full drop-shadow-[0_9px_22px_rgba(0,0,0,0.09)]';
+                : 'h-full drop-shadow-[0_4px_11px_rgba(0,0,0,0.045)]'; // 50% softer + closer
 
               return (
                 <div key={b.id} className={span}>
@@ -124,4 +128,5 @@ return (
     </div>
   </main>
 );
+
 }
