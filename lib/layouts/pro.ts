@@ -8,31 +8,31 @@ export const PRO_DEF: LaneDefinition = {
       title: 'CARRIERS',
       rowHeight: 300,
       blocks: [
-        { id: 'PRO.CARR.CHR', colSpan: 2 }, // Characters (table)
-        { id: 'PRO.CARR.OBJ' },             // Objects (table)
-        { id: 'PRO.CARR.WRL' },             // Worlds / locales (table)
-        { id: 'PRO.CARR.ROU' },             // Routines (table)
-        { id: 'PRO.CARR.DIRECTOR' },        // Carrier Director (prose)
+        { id: 'PRO.GMOV.WORLD' },               // World synth (prose)
+        { id: 'PRO.GMOV.PLAYERS' },             // Player POV (prose)
+        { id: 'PRO.GMOV.FEELS' },               // Feel targets (prose)
+        { id: 'PRO.GMOV.DIRECTOR' },            // Movement Director (prose)
+        { id: 'PRO.GMOV.MOTIF', colSpan: 2 },   // Motif map (table)
       ],
     },
     {
       title: 'GAME MOVEMENT',
       rowHeight: 320,
       blocks: [
-        { id: 'PRO.GMOV.WORLD',   colSpan: 2 }, // World synth (prose)
-        { id: 'PRO.GMOV.PLAYERS' },             // Player POV (prose)
-        { id: 'PRO.GMOV.FEELS' },               // Feel targets (prose)
-        { id: 'PRO.GMOV.MOTIF' },               // Motif map (table)
-        { id: 'PRO.GMOV.DIRECTOR' },            // Movement Director (prose)
+        { id: 'PRO.NCSP.DIRECTOR' },                          // Spine Director (prose)
+        { id: 'PRO.NCSP.SPINE' },                             // Narrative spine (prose)
+        { id: 'PRO.CARR.CHR', colSpan: 2 },                   // Characters (table)
+        { id: 'PRO.CARR.WRL', colSpan: 2 },                   // Worlds / locales (table)
       ],
     },
     {
       title: 'SPINE & ETHOS',
       rowHeight: 300,
-      blocks: [
-        { id: 'PRO.NCSP.SPINE',     colSpan: 2, rowSpan: 2 }, // Narrative spine (prose)
-        { id: 'PRO.NCSP.DIRECTOR' },                          // Spine Director (prose)
+      blocks: [        
         { id: 'PRO.ETHO.TITLE' },                             // Title ethos (prose)
+        { id: 'PRO.CARR.DIRECTOR' },                          // Carrier Director (prose)      
+        { id: 'PRO.CARR.OBJ', colSpan: 2 },                   // Objects (table)
+        { id: 'PRO.CARR.ROU', colSpan: 2 },                   // Routines (table)  
       ],
     },
   ],
