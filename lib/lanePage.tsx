@@ -79,15 +79,15 @@ export default async function LanePage({ def }: { def: LaneDefinition }) {
     (byId[id]?.human_title?.trim()) || def.titles?.[id] || prettifyId(id);
 
   // UPDATED layout: wider outer padding, larger gaps, lighter shadows
- return (
+return (
   <main className="bg-zinc-100 min-h-screen">
-    {/* Header now constrained to same width */}
-    <div className="mx-auto max-w-screen-2xl px-5 md:px-8 xl:px-10 py-4 md:py-5">
+    {/* Header, widened ~20% */}
+    <div className="mx-auto max-w-[1840px] px-5 md:px-8 xl:px-10 py-4 md:py-5">
       <LaneBar current={def.laneId} />
     </div>
 
-    {/* Page content container (moderate, ~half the previous change) */}
-    <div className="mx-auto max-w-screen-2xl px-5 md:px-8 xl:px-10 py-6 md:py-7">
+    {/* Content, same widened container */}
+    <div className="mx-auto max-w-[1840px] px-5 md:px-8 xl:px-10 py-6 md:py-7">
       {def.sections.map((sec) => (
         <section key={sec.title} className="min-h-0">
           <h3 className="mt-6 mb-3 text-xs font-semibold tracking-wide text-zinc-600">
@@ -107,7 +107,7 @@ export default async function LanePage({ def }: { def: LaneDefinition }) {
               const isTable = (row?.card_type ?? '').toUpperCase() === 'TABLE';
               const wrapperClass = isTable
                 ? 'h-full'
-                : 'h-full drop-shadow-[0_9px_22px_rgba(0,0,0,0.09)]'; // slightly lighter than original
+                : 'h-full drop-shadow-[0_9px_22px_rgba(0,0,0,0.09)]';
 
               return (
                 <div key={b.id} className={span}>
@@ -123,4 +123,5 @@ export default async function LanePage({ def }: { def: LaneDefinition }) {
     </div>
   </main>
 );
+
 }
